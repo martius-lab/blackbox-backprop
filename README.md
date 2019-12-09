@@ -40,6 +40,7 @@ Currently, the following solver modules are available (the list will be growing 
 | Travelling Salesman      | Cutting plane algorithm implemented in [Gurobi](https://www.gurobi.com/) | [Differentiation of Blackbox Combinatorial Solvers](http://arxiv.org/abs/1912.02175) |
 | Shortest Path (on a grid)      | Dijkstra algorithm (vertex version)      |   [Differentiation of Blackbox Combinatorial Solvers](http://arxiv.org/abs/1912.02175) |
 | Min-cost Perfect matching on general graphs | [Blossom V (Kolmogorov, 2009)](https://pub.ist.ac.at/~vnk/papers/blossom5.pdf)|  [Differentiation of Blackbox Combinatorial Solvers](http://arxiv.org/abs/1912.02175) |
+| Ranking (+ induced Recall & mAP loss functions) | `torch.argsort` | [Blackbox Optimizationof Rank-Based Metrics](http://arxiv.org/abs/1912.02175)|
 
 
 ## Usage
