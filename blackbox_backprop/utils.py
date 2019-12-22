@@ -1,4 +1,4 @@
-import ray
+import sys
 
 
 def maybe_parallelize(function, arg_list):
@@ -8,7 +8,8 @@ def maybe_parallelize(function, arg_list):
     :param arg_list: list of function arguments (one for each execution)
     :return:
     """
-    if ray.is_initialized():
+    # Passive ray module check
+    if 'ray' in sys.modules and ray.is_initialized():
         ray_fn = ray.remote(function)
         return ray.get([ray_fn.remote(arg) for arg in arg_list])
     else:
