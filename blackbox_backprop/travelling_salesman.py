@@ -115,17 +115,16 @@ class TspSolver(torch.autograd.Function):
         distance_matrices: torch.Tensor of shape [batch_size, num_vertices, num_vertices]
         return: torch.Tenspr of shape [batch_size, num_vertices, num_vertices] 0-1 indicator matrices of the solution
         """
-        distance_matrices = distance_matrices.detach().cpu().numpy()
-        suggested_tours = np.asarray(maybe_parallelize(gurobi_tsp, arg_list=list(distance_matrices)))
-        ctx.save_for_backward(suggested_tours, distance_matrices, lambda_val)
+        ctx.distance_matrices = distance_matrices.detach().cpu().numpy()
+        ctx.lambda_val = lambda_val
+        suggested_tours = np.asarray(maybe_parallelize(gurobi_tsp, arg_list=list(ctx.distance_matrices)))
         return torch.from_numpy(suggested_tours).float().to(distance_matrices.device)
 
     @staticmethod
     def backward(ctx, grad_output):
-        suggested_tours, distance_matrices, lambda_val = ctx.saved_tensors
-        assert grad_output.shape == suggested_tours.shape
+        assert grad_output.shape == ctx.suggested_tours.shape
         grad_output_numpy = grad_output.detach().cpu().numpy()
-        distances_prime = distance_matrices + lambda_val * grad_output_numpy
+        distances_prime = ctx.distance_matrices + ctx.lambda_val * grad_output_numpy
         better_tours = np.array(maybe_parallelize(gurobi_tsp, arg_list=list(distances_prime)))
-        gradient = -(suggested_tours - better_tours) / lambda_val
+        gradient = -(ctx.suggested_tours - better_tours) / ctx.lambda_val
         return torch.from_numpy(gradient.astype(np.float32)).to(grad_output.device), None

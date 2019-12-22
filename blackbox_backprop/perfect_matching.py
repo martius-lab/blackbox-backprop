@@ -55,7 +55,7 @@ def min_cost_perfect_matching(edges, edge_weights, num_vertices):
     """
 
     edges = tuple(map(tuple, edges))  # Make hashable
-    pm = blossom.PerfectMatching(num_vertices, len(edges))
+    pm = blossom_v.PerfectMatching(num_vertices, len(edges))
 
     for (v1, v2), w in zip(edges, edge_weights):
         pm.AddEdge(int(v1), int(v2), float(w))

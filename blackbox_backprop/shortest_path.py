@@ -81,17 +81,16 @@ class ShortestPath(torch.autograd.Function):
         :return: shortest paths (torch.Tensor of shape [batch_size, grid_dim, grid_dim]): indicator matrices
         of taken paths
         """
-        weights = weights.detach().cpu().numpy()
-        suggested_tours = np.asarray(maybe_parallelize(dijkstra, arg_list=list(weights)))
-        ctx.save_for_backward(suggested_tours, weights, lambda_val)
-        return torch.from_numpy(suggested_tours).float().to(weights.device)
+        ctx.weights = weights.detach().cpu().numpy()
+        ctx.lambda_val = lambda_val
+        ctx.suggested_tours = np.asarray(maybe_parallelize(dijkstra, arg_list=list(ctx.weights)))
+        return torch.from_numpy(ctx.suggested_tours).float().to(weights.device)
 
     @staticmethod
     def backward(ctx, grad_output):
-        suggested_tours, weights, lambda_val = ctx.saved_tensors
-        assert grad_output.shape == suggested_tours.shape
+        assert grad_output.shape == ctx.suggested_tours.shape
         grad_output_numpy = grad_output.detach().cpu().numpy()
-        weights_prime = np.maximum(weights + lambda_val * grad_output_numpy, 0.0)
+        weights_prime = np.maximum(ctx.weights + ctx.lambda_val * grad_output_numpy, 0.0)
         better_paths = np.asarray(maybe_parallelize(dijkstra, arg_list=list(weights_prime)))
-        gradient = -(suggested_tours - better_paths) / lambda_val
+        gradient = -(ctx.suggested_tours - better_paths) / ctx.lambda_val
         return torch.from_numpy(gradient).to(grad_output.device), None
