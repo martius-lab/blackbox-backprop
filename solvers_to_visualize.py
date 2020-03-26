@@ -24,17 +24,18 @@ class GraphMatchingBBSolver(BlackboxSolverAbstract):
         return m, m_q
 
     @staticmethod
-    def gen_input(num_nodes_l, num_edges_l, seed, wn_f=10, wn_s=0, ws_f=1, ws_s=0, y_f=1, y_s=0, directed_edges=False):
+    def gen_input(num_nodes_l, num_edges_l, seed, w_normal_factor=1, w_normal_addend=0, w_shift_factor=1, 
+                  w_shift_addend=0, y_factor=1, y_addend=0, directed_edges=False):
         w_slice_l, y_grad_l = gen_w_and_y_grad(
             seed=seed,
-            # Choose a different n_factor, n_shift, s_factor, s_shift to specify a different cut
+            # Choose a different normal_factor, normal_addend, shift_factor, shift_addend to specify a different cut
             params=[dict(shape=num_nodes_l,
-                         w_slice_par=dict(mode='slice_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f,
-                                          s_shift=ws_s),
-                         y_grad_par=dict(mode='hamming_random', factor=y_f, shift=y_s)),  # unary costs
+                         w_slice_par=dict(mode='slice_random', normal_factor=w_normal_factor, normal_addend=w_normal_addend, 
+                                          shift_factor=w_shift_factor, shift_addend=w_shift_addend),
+                         y_grad_par=dict(mode='hamming_random', factor=y_factor, addend=y_addend)),  # unary costs
                     dict(shape=num_edges_l,
-                         w_slice_par=dict(mode='const_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f,
-                                          s_shift=ws_s),
+                         w_slice_par=dict(mode='const_random', normal_factor=w_normal_factor, normal_addend=w_normal_addend, 
+                                          shift_factor=w_shift_factor, shift_addend=w_shift_addend),
                          y_grad_par=dict(mode='zero'))])  # quadratic costs
 
         edges_left, edges_right = [gen_edges(nn, ne, directed=directed_edges) for nn, ne in
@@ -42,7 +43,7 @@ class GraphMatchingBBSolver(BlackboxSolverAbstract):
         solver_params = {
             'timeout': 100,
             'primalComputationInterval': 10,
-            'maxIter': 100000,
+            'maxIter': 1000000,
             'graphMatchingRounding': 'mcf',
             'graphMatchingFrankWolfeIterations': 50
         }
@@ -63,17 +64,19 @@ class MultiGraphMatchingBBSolver(BlackboxSolverAbstract):
         return m_l + m_q_l
 
     @staticmethod
-    def gen_input(num_nodes_l, num_edges_l, seed, wn_f=1, wn_s=0, ws_f=1, ws_s=0, y_f=1, y_s=0, directed_edges=False):
+    def gen_input(num_nodes_l, num_edges_l, seed, w_normal_factor=1, w_normal_addend=0, w_shift_factor=1, w_shift_addend=0, 
+                  y_factor=1, y_addend=0, directed_edges=False):
         unary_shapes = [(i, j) for i, j in it.combinations(num_nodes_l, 2)]
         quadratic_shapes = [(i, j) for i, j in it.combinations(num_edges_l, 2)]
 
         params_unary = [dict(shape=shape,
-                             w_slice_par=dict(mode='slice_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f,
-                                              s_shift=ws_s),
-                             y_grad_par=dict(mode='hamming_random', factor=y_f, shift=y_s)) for shape in unary_shapes]
+                             w_slice_par=dict(mode='slice_random', normal_factor=w_normal_factor, normal_addend=w_normal_addend, 
+                                              shift_factor=w_shift_factor, shift_addend=w_shift_addend),
+                             y_grad_par=dict(mode='hamming_random', factor=y_factor, addend=y_addend)) for shape in unary_shapes]
         params_quadratic = [dict(shape=shape,
-                                 w_slice_par=dict(mode='const_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f,
-                                                  s_shift=ws_s),
+                                 w_slice_par=dict(mode='const_random', normal_factor=w_normal_factor,
+                                                  normal_addend=w_normal_addend, shift_factor=w_shift_factor, 
+                                                  shift_addend=w_shift_addend),
                                  y_grad_par=dict(mode='zero')) for shape in quadratic_shapes]
         params = params_unary + params_quadratic
 
@@ -112,13 +115,14 @@ class RankingBBSolver(BlackboxSolverAbstract):
         return [s]
 
     @staticmethod
-    def gen_input(sequence_length, seed, wn_f=1, wn_s=0, ws_f=1, ws_s=0, y_f=1, y_s=0):
+    def gen_input(sequence_length, seed, w_normal_factor=1, w_normal_addend=0, w_shift_factor=1, w_shift_addend=0, y_factor=1, 
+                  y_addend=0):
         w_slice_l, y_grad_l = gen_w_and_y_grad(
             seed=seed,
             params=[dict(shape=[sequence_length],
-                         w_slice_par=dict(mode='slice_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f,
-                                          s_shift=ws_s),
-                         y_grad_par=dict(mode='random', factor=y_f, shift=y_s))])
+                         w_slice_par=dict(mode='slice_random', normal_factor=w_normal_factor, normal_addend=w_normal_addend, 
+                                              shift_factor=w_shift_factor, shift_addend=w_shift_addend),
+                         y_grad_par=dict(mode='random', factor=y_factor, addend=y_addend))])
 
         solver_config = dict()
         return w_slice_l, y_grad_l, solver_config
@@ -136,13 +140,14 @@ class TSPBBSolver(BlackboxSolverAbstract):
         return [m]
 
     @staticmethod
-    def gen_input(num_nodes, seed, wn_f=1, wn_s=0, ws_f=1, ws_s=0, y_f=1, y_s=0):
+    def gen_input(num_nodes, seed, w_normal_factor=1, w_normal_addend=0, w_shift_factor=1, w_shift_addend=0, y_factor=1, 
+                  y_addend=0):
         w_slice_l, y_grad_l = gen_w_and_y_grad(
             seed=seed,
             params=[dict(shape=(num_nodes, num_nodes),
-                         w_slice_par=dict(mode='slice_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f, s_shift=ws_s,
-                                          sym=True),
-                         y_grad_par=dict(mode='hamming_random', factor=y_f, shift=y_s, sym=True))])
+                         w_slice_par=dict(mode='slice_random', normal_factor=w_normal_factor, normal_addend=w_normal_addend, 
+                                              shift_factor=w_shift_factor, shift_addend=w_shift_addend, sym=True),
+                         y_grad_par=dict(mode='hamming_random', factor=y_factor, addend=y_addend, sym=True))])
 
         solver_config = dict()
         return w_slice_l, y_grad_l, solver_config
@@ -160,13 +165,14 @@ class ShortestPathBBSolver(BlackboxSolverAbstract):
         return [m]
 
     @staticmethod
-    def gen_input(num_nodes, seed, wn_f=1, wn_s=0, ws_f=1, ws_s=0, y_f=1, y_s=0):
+    def gen_input(num_nodes, seed, w_normal_factor=1, w_normal_addend=0, w_shift_factor=1, w_shift_addend=0, y_factor=1, 
+                  y_addend=0):
         w_slice_l, y_grad_l = gen_w_and_y_grad(
             seed=seed,
             params=[dict(shape=(num_nodes, num_nodes),
-                         w_slice_par=dict(mode='slice_random', n_factor=wn_f, n_shift=wn_s, s_factor=ws_f, s_shift=ws_s,
-                                          pos=True),
-                         y_grad_par=dict(mode='hamming_random', factor=y_f, shift=y_s))])
+                         w_slice_par=dict(mode='slice_random', normal_factor=w_normal_factor, normal_addend=w_normal_addend, 
+                                          shift_factor=w_shift_factor, shift_addend=w_shift_addend, pos=True),
+                         y_grad_par=dict(mode='hamming_random', factor=y_factor, addend=y_addend))])
 
         solver_config = {}
         return w_slice_l, y_grad_l, solver_config
