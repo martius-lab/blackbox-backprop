@@ -23,25 +23,6 @@ def interpolate(color1, color2, factor):
     return tuple([(factor ** exp * c1 + (1 - factor) ** exp * c2) / n for c1, c2 in zip(color1, color2)])
 
 
-def compare_neighbors(arr):
-    comp_arr = np.full(arr.shape, True, dtype=bool)
-    for (x, y), item in np.ndenumerate(arr):
-        with suppress(IndexError):
-            if arr[x - 1, y] != item:
-                comp_arr[x, y] = False
-                continue
-            if arr[x + 1, y] != item:
-                comp_arr[x, y] = False
-                continue
-            if arr[x, y + 1] != item:
-                comp_arr[x, y] = False
-                continue
-            if arr[x, y - 1] != item:
-                comp_arr[x, y] = False
-                continue
-    return comp_arr
-
-
 def plot_mesh(value_mesh_list, w1_mesh, w2_mesh, save, show_box, show_axes):
     ipv.clear()
     figs = []

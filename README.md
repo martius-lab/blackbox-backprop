@@ -4,6 +4,11 @@ By Marin Vlastelica*, Anselm Paulus*, Vít Musil, [Georg Martius](http://georg.p
 
 [Autonomous Learning Group](https://al.is.tuebingen.mpg.de/), [Max Planck Institute for Intelligent Systems](https://is.tuebingen.mpg.de/).
 
+Ranking |  Shortest path  |  Graph Matching    
+:-------------------------:|:-------------------------:|:-------------------------:
+ ![alt text](images/ranking.png "Ranking")  |   ![alt text](images/shortest_path.png "Shortest Path") | ![alt text](images/graph_matching.png "Graph matching")
+
+
 ## Table of Contents
 0. [Introduction](#introduction)
 0. [Installation](#installation)
@@ -55,6 +60,11 @@ loss = HammingLoss(suggested_shortest_paths, true_shortest_paths) # Use e.g. Ham
 loss.backward() # The backward pass is handled automatically
 ...
 ```
+
+## Visualizations
+
+Visualizations that have appeared in the papers can be generated in the attached jupyter notebook.
+This requires python packages `ipyvolume` and `ipywidgets`. Also, make sure to allow **all jupyter nbextensions** as listed [here](https://github.com/maartenbreddels/ipyvolume)
 
 ## Notes
 
