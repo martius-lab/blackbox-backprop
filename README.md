@@ -46,11 +46,11 @@ Currently, the following solver modules are available (the list will be growing 
 | Graph Matching | [Swoboda, 2017](http://openaccess.thecvf.com/content_cvpr_2017/html/Swoboda_A_Study_of_CVPR_2017_paper.html) | [Deep Graph Matching via Blackbox Differentiation of Combinatorial Solvers](http://arxiv.org/)|
 | Multigraph Matching | [Swoboda, 2019](http://openaccess.thecvf.com/content_CVPR_2019/html/Swoboda_A_Convex_Relaxation_for_Multi-Graph_Matching_CVPR_2019_paper.html) | [Deep Graph Matching via Blackbox Differentiation of Combinatorial Solvers](http://arxiv.org/abs/1912.02175)|
 
-The graoh matching and multigraph matching solver and corresponding differentiable PyTorch modules are hosted at the [LPMP repository](https://github.com/LPMP/LPMP) 
+The graph matching and multigraph matching solver and corresponding differentiable PyTorch modules are hosted at the [LPMP repository](https://github.com/LPMP/LPMP) 
 
 ## Usage
 
-Exactly as you would expect of a PyTorch module (with minor deatils differing from solver to solver)
+Exactly as you would expect of a PyTorch module (with minor details differing from solver to solver)
 ```python
 import blackbox_backprop as bb
 ...
@@ -64,7 +64,7 @@ loss.backward() # The backward pass is handled automatically
 ## Visualizations
 
 Visualizations that have appeared in the papers can be generated in the attached jupyter notebook.
-This requires python packages `ipyvolume` and `ipywidgets`. Also, make sure to allow **all jupyter nbextensions** as listed [here](https://github.com/maartenbreddels/ipyvolume)
+This requires python packages `ipyvolume` and `ipywidgets`. Also, make sure to allow **all jupyter nbextensions** as listed [here](https://github.com/maartenbreddels/ipyvolume).
 
 Ranking |  Shortest path  |  Graph Matching    
 :-------------------------:|:-------------------------:|:-------------------------:
