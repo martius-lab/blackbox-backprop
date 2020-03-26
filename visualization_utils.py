@@ -84,8 +84,8 @@ def plot_mesh(value_mesh_list, w1_mesh, w2_mesh, save, show_box, show_axes):
     return figs
 
 
-def apply_shift_and_factor(val, sym=False, pos=False, shift=0.0, factor=1.0):
-    val = val * factor + shift
+def apply_shift_and_factor(val, sym=False, pos=False, addend=0.0, factor=1.0):
+    val = val * factor + addend
     if sym:
         val = (val + val.T) / 2
     if pos:
@@ -121,14 +121,14 @@ def get_grad(mode, **kwargs):
     return grad
 
 
-def w_slice(shift, normal, s_shift=0.0, s_factor=1.0, n_shift=0.0, n_factor=1.0, sym=False, pos=False):
+def w_slice(shift, normal, shift_addend, shift_factor, normal_addend, normal_factor, sym=False, pos=False):
     """
     n_shift and n_factor denote the shift and multiplication constant of the normal
     equivalent for the shift
     sym makes shift and normal symmetric
     """
-    shift = shift * s_factor + s_shift
-    normal = normal * n_factor + n_shift
+    shift = shift * shift_factor + shift_addend
+    normal = normal * normal_factor + normal_addend
     if sym:
         shift = (shift + shift.T) / 2
         normal = (normal + normal.transpose(0, 2, 1)) / 2
@@ -213,8 +213,7 @@ class BlackboxSolverAbstract(ABC):
     def f(y, y_grad):
         return np.sum(y * y_grad)
 
-    def f_lambda(self, w_l, lambda_val, margin):
-        w_l = [w + margin for w in w_l]
+    def f_lambda(self, w_l, lambda_val):
         y_l = self.solver(w_l, **self.solver_config)
         w_prime_l = [w + lambda_val * y_grad for w, y_grad in zip(w_l, self.y_grad_l)]
         y_prime_l = self.solver(w_prime_l, **self.solver_config)
@@ -231,7 +230,7 @@ class BlackboxSolverAbstract(ABC):
     def d2slice(self, w1, w2):
         return [self.d2slice_single(w1, w2, **w_slice) for w_slice in self.w_slice_l]
 
-    def gen_meshes(self, lambdas, margins, bounds1, bounds2, partitions):
+    def gen_meshes(self, lambdas, bounds1, bounds2, partitions):
         w1_vals = np.linspace(*bounds1, partitions)
         w2_vals = np.linspace(*bounds2, partitions)
         w1_mesh, w2_mesh = np.meshgrid(w1_vals, w2_vals)
@@ -242,12 +241,12 @@ class BlackboxSolverAbstract(ABC):
             vals = [v - v.min() for v in vals]
             return vals
 
-        meshes = [mesh_for_single(lambda_val=l, margin=m) for m, l in it.product(margins, lambdas)]
+        meshes = [mesh_for_single(lambda_val=l) for l in lambdas]
         meshes = [np.array(vals) for vals in zip(*meshes)]
         return meshes, w1_mesh, w2_mesh
 
-    def plot_flambda(self, lambdas, partitions, bounds1, bounds2, margins=[0], save=False, plot_cost=False, show_box=True, show_axes=True):
-        meshes, w1_mesh, w2_mesh = self.gen_meshes(lambdas, margins, bounds1, bounds2, partitions)
+    def plot_flambda(self, lambdas, partitions, bounds1, bounds2, save=False, plot_cost=False, show_box=True, show_axes=True):
+        meshes, w1_mesh, w2_mesh = self.gen_meshes(lambdas, bounds1, bounds2, partitions)
         if not plot_cost:
             meshes = [meshes[0]]
         self.figs = plot_mesh(meshes, w1_mesh, w2_mesh, save=save, show_box=show_box, show_axes=show_axes)
