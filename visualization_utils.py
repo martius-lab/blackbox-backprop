@@ -6,13 +6,8 @@ from contextlib import suppress
 import ipyvolume as ipv
 import numpy as np
 
-colors = [(0.368, 0.507, 0.71),
-          (0.881, 0.611, 0.142),
-          (0.923, 0.386, 0.209),
-          (0.56, 0.692, 0.195),
-          (0.528, 0.471, 0.701),
-          (0.772, 0.432, 0.102),
-          (76. / 255., 93. / 255., 26. / 255.)]
+colors = [(0.923, 0.386, 0.209),
+          (0.368, 0.507, 0.71)]
 
 colors_alpha = [tuple(list(c) + [1.0]) for c in colors]
 
@@ -70,8 +65,8 @@ def plot_mesh(value_mesh_list, w1_mesh, w2_mesh, save, show_box, show_axes):
         col = []
         for m in mesh:
             znorm = (m - m.min()) / (m.max() - m.min())
-            color = np.asarray([[interpolate(darker(colors_alpha[1], 1.5 * x + 0.75),
-                                             darker(colors_alpha[6], 1.5 * (1 - x) + 0.75), x) for x in y] for y in
+            color = np.asarray([[interpolate(darker(colors_alpha[0], 1.5 * x + 0.75),
+                                             darker(colors_alpha[1], 1.5 * (1 - x) + 0.75), x) for x in y] for y in
                                 znorm])
             col.append(color)
         color = np.array(col)
@@ -219,7 +214,7 @@ class BlackboxSolverAbstract(ABC):
         y_prime_l = self.solver(w_prime_l, **self.solver_config)
         c_val = sum(self.cost(w, y) for w, y in zip(w_l, y_l))
         c_val_prime = sum(self.cost(w_prime, y_prime) for w_prime, y_prime in zip(w_prime_l, y_prime_l))
-        f_val = sum(self.cost(y_prime, y_grad) for y_prime, y_grad in zip(y_prime_l, self.y_grad_l))
+        f_val = sum(self.f(y_prime, y_grad) for y_prime, y_grad in zip(y_prime_l, self.y_grad_l))
         # Here we do not return the gradient y-y', but the value of f_lambda, which is the integral over the constant gradient which is equal to c-c'=w*(y-y')
         return f_val - (c_val - c_val_prime) / lambda_val, c_val_prime
 
