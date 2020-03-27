@@ -45,7 +45,7 @@ def plot_mesh(value_mesh_list, w1_mesh, w2_mesh, save, show_box, show_axes):
 
         col = []
         for m in mesh:
-            znorm = (m - m.min()) / (m.max() - m.min())
+            znorm = (m - m.min()) / (m.max() - m.min() + 1e-8)
             color = np.asarray([[interpolate(darker(colors_alpha[0], 1.5 * x + 0.75),
                                              darker(colors_alpha[1], 1.5 * (1 - x) + 0.75), x) for x in y] for y in
                                 znorm])
@@ -194,9 +194,9 @@ class BlackboxSolverAbstract(ABC):
         w_prime_l = [w + lambda_val * y_grad for w, y_grad in zip(w_l, self.y_grad_l)]
         y_prime_l = self.solver(w_prime_l, **self.solver_config)
         c_val = sum(self.cost(w, y) for w, y in zip(w_l, y_l))
-        c_val_prime = sum(self.cost(w_prime, y_prime) for w_prime, y_prime in zip(w_prime_l, y_prime_l))
-        f_val = sum(self.f(y, y_grad) for y, y_grad in zip(y_l, self.y_grad_l))
-        # Here we do not return the gradient y-y', but the value of f_lambda, which is the integral over the constant gradient which is equal to c-c'=w*(y-y')
+        c_val_prime = sum(self.cost(w, y_prime) for w, y_prime in zip(w_l, y_prime_l))
+        f_val = sum(self.f(y_prime, y_grad) for y_prime, y_grad in zip(y_prime_l, self.y_grad_l))
+        # Here we make use of the fact, that (c - c') = w * (y - y') ~ w * df/dw which is the gradient evaluated at w
         return f_val - (c_val - c_val_prime) / lambda_val, c_val_prime
 
     @staticmethod
