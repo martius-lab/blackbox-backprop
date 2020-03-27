@@ -195,7 +195,7 @@ class BlackboxSolverAbstract(ABC):
         y_prime_l = self.solver(w_prime_l, **self.solver_config)
         c_val = sum(self.cost(w, y) for w, y in zip(w_l, y_l))
         c_val_prime = sum(self.cost(w_prime, y_prime) for w_prime, y_prime in zip(w_prime_l, y_prime_l))
-        f_val = sum(self.f(y_prime, y_grad) for y_prime, y_grad in zip(y_prime_l, self.y_grad_l))
+        f_val = sum(self.f(y, y_grad) for y, y_grad in zip(y_l, self.y_grad_l))
         # Here we do not return the gradient y-y', but the value of f_lambda, which is the integral over the constant gradient which is equal to c-c'=w*(y-y')
         return f_val - (c_val - c_val_prime) / lambda_val, c_val_prime
 
