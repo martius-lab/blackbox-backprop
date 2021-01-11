@@ -17,7 +17,7 @@ By Marin Vlastelica*, Anselm Paulus*, Vít Musil, [Georg Martius](http://georg.p
 
 ## Introduction
 
-This repository contains PyTorch modules that wrap blackbox combinatorial solver via the method proposed in [Differentiation of Blackbox Combinatorial Solvers](http://arxiv.org/abs/1912.02175)
+This repository contains PyTorch modules that wrap blackbox combinatorial solver via the method proposed in [Differentiation of Blackbox Combinatorial Solvers](https://openreview.net/pdf?id=BkevoJSYPB)
 
 *Disclaimer*: This code is a PROTOTYPE. It should work fine but use at your own risk.
  
