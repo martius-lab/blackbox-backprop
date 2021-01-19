@@ -117,8 +117,8 @@ class TspSolver(torch.autograd.Function):
         """
         ctx.distance_matrices = distance_matrices.detach().cpu().numpy()
         ctx.lambda_val = lambda_val
-        suggested_tours = np.asarray(maybe_parallelize(gurobi_tsp, arg_list=list(ctx.distance_matrices)))
-        return torch.from_numpy(suggested_tours).float().to(distance_matrices.device)
+        ctx.suggested_tours = np.asarray(maybe_parallelize(gurobi_tsp, arg_list=list(ctx.distance_matrices)))
+        return torch.from_numpy(ctx.suggested_tours).float().to(distance_matrices.device)
 
     @staticmethod
     def backward(ctx, grad_output):
