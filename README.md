@@ -1,4 +1,7 @@
-# Differentiation of Blackbox Combinatorial Solvers
+# Differentiation of Blackbox Combinatorial Solvers: Plug-and-Play Modules
+
+This repository provides a collection of PyTorch modules for combinatorial solvers based on 
+[Differentiation of Blackbox Combinatorial Solvers](https://openreview.net/pdf?id=BkevoJSYPB).
 
 By Marin Vlastelica*, Anselm Paulus*, Vít Musil, [Georg Martius](http://georg.playfulmachines.com/) and [Michal Rolínek](https://scholar.google.de/citations?user=DVdSTFQAAAAJ&hl=en).
 
@@ -17,11 +20,15 @@ By Marin Vlastelica*, Anselm Paulus*, Vít Musil, [Georg Martius](http://georg.p
 
 ## Introduction
 
-This repository contains PyTorch modules that wrap blackbox combinatorial solver via the method proposed in [Differentiation of Blackbox Combinatorial Solvers](https://openreview.net/pdf?id=BkevoJSYPB)
+This repository contains PyTorch modules that wrap blackbox combinatorial solver via the method proposed in [Differentiation of Blackbox Combinatorial Solvers](http://arxiv.org/abs/1912.02175).
+Besides the solvers employed in the original paper, this repo includes wrapped solvers for ranking (as used in [Blackbox Optimizationof Rank-Based Metrics](https://arxiv.org/abs/1912.03500)) 
+and Graph Matching/Multigraph Matching (as used in [Deep Graph Matching via Blackbox Differentiation of Combinatorial Solvers](https://arxiv.org/abs/2003.11657)|).
 
 *Disclaimer*: This code is a PROTOTYPE. It should work fine but use at your own risk.
  
-For the exact usage of the combinatorial modules, see [wider codebase](https://sites.google.com/view/combinatorialgradients/home) 
+For the exact usage of the combinatorial modules, see our public implementations of
+- [Differentiation of Blackbox Combinatorial Solvers](https://github.com/martius-lab/blackbox-differentiation-combinatorial-solvers)
+- [Deep Graph Matching via Blackbox Differentiation of Combinatorial Solvers](https://github.com/martius-lab/blackbox-deep-graph-matching).
 
 ## Installation
 
