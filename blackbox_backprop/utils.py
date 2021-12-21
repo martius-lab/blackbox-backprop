@@ -1,5 +1,8 @@
 import sys
-
+try:
+    import ray
+except ImportError as e:
+    print(e)
 
 def maybe_parallelize(function, arg_list):
     """
